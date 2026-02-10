@@ -35,6 +35,7 @@ export default function Header() {
     setObras((data as Obra[]) || [])
   }
 
+  // Fecha dropdown desktop clicando fora + ESC
   useEffect(() => {
     function onClickOutside(e: MouseEvent) {
       if (!obrasDesktopRef.current) return
@@ -62,6 +63,7 @@ export default function Header() {
     loadObras()
   }, [])
 
+  // Fecha menus ao navegar (mudar rota)
   useEffect(() => {
     setOpenObrasDesktop(false)
     setOpenObrasMobile(false)
@@ -72,6 +74,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-zinc-900 bg-black/80 backdrop-blur">
       <div className="mx-auto max-w-6xl px-6">
         <div className="flex h-16 items-center justify-between gap-4">
+          {/* Logo */}
           <Link href="/" className="flex items-center gap-3">
             <div className="relative h-9 w-9 overflow-hidden rounded-lg border border-zinc-900 bg-zinc-950">
               <Image
@@ -88,7 +91,9 @@ export default function Header() {
             </span>
           </Link>
 
+          {/* Desktop */}
           <nav className="hidden md:flex items-center gap-6 text-sm">
+            {/* Obras dropdown */}
             <div className="relative" ref={obrasDesktopRef}>
               <button
                 type="button"
@@ -148,8 +153,10 @@ export default function Header() {
               Contato
             </Link>
 
+            {/* ✅ IMPORTANTE: prefetch desativado para não disparar popup na Home */}
             <Link
               href="/admin"
+              prefetch={false}
               className="rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-zinc-200 hover:bg-zinc-900 transition"
             >
               Admin
@@ -160,6 +167,7 @@ export default function Header() {
             </Link>
           </nav>
 
+          {/* Mobile toggle */}
           <button
             type="button"
             className="md:hidden rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-zinc-100 hover:bg-zinc-900 transition"
@@ -170,6 +178,7 @@ export default function Header() {
           </button>
         </div>
 
+        {/* Mobile menu */}
         {openMobile && (
           <div className="md:hidden pb-4">
             <div className="mt-2 rounded-xl border border-zinc-900 bg-zinc-950 overflow-hidden">
@@ -245,8 +254,10 @@ export default function Header() {
                   Contato
                 </Link>
 
+                {/* ✅ IMPORTANTE: prefetch desativado também no mobile */}
                 <Link
                   href="/admin"
+                  prefetch={false}
                   className="block rounded-lg px-3 py-2 text-zinc-200 hover:bg-zinc-900 transition"
                   onClick={() => setOpenMobile(false)}
                 >

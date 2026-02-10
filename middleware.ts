@@ -1,14 +1,14 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-export const config = {
-  matcher: ['/admin/:path*'],
-}
-
 export function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl
+
+  // Só protege /admin e subrotas
+  if (!pathname.startsWith('/admin')) return NextResponse.next()
+
   const auth = req.headers.get('authorization')
 
-  // Se não tem auth -> pede login
   if (!auth) {
     return new NextResponse('Auth required', {
       status: 401,
@@ -24,10 +24,9 @@ export function middleware(req: NextRequest) {
     })
   }
 
-  // Edge-safe
   let decoded = ''
   try {
-    decoded = atob(encoded)
+    decoded = atob(encoded) // Edge-safe
   } catch {
     return new NextResponse('Invalid auth', {
       status: 401,
@@ -50,4 +49,8 @@ export function middleware(req: NextRequest) {
   }
 
   return NextResponse.next()
+}
+
+export const config = {
+  matcher: ['/admin/:path*'],
 }
