@@ -34,9 +34,7 @@ export default function Home() {
   return (
     <main className="min-h-screen text-white bg-zinc-900/20">
       <div className="mx-auto max-w-6xl px-6 py-14">
-        {/* HERO */}
         <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-zinc-900/40 p-10 md:p-14">
-          {/* background glow (mais leve) */}
           <div className="absolute inset-0 opacity-60 pointer-events-none">
             <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-white/10 blur-3xl" />
             <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-white/5 blur-3xl" />
@@ -75,7 +73,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* OBRAS */}
         <section className="mt-12">
           <div className="flex items-end justify-between gap-4 mb-6">
             <div>
@@ -105,7 +102,6 @@ export default function Home() {
                     href={`/obras/${o.slug}`}
                     className="group rounded-2xl border border-white/10 bg-zinc-900/40 overflow-hidden hover:border-white/20 transition"
                   >
-                    {/* banner */}
                     <div className="relative h-56 bg-white/5">
                       {bannerUrl ? (
                         <>
@@ -114,7 +110,6 @@ export default function Home() {
                             alt=""
                             className="w-full h-full object-cover group-hover:scale-[1.02] transition"
                           />
-                          {/* gradiente mais leve */}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/5 to-transparent" />
                         </>
                       ) : (
@@ -130,7 +125,6 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* texto */}
                     <div className="p-6">
                       <div className="text-xl font-semibold">{o.nome}</div>
                       <div className="text-zinc-200/70 mt-2 line-clamp-2">

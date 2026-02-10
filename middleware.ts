@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
+export const config = {
+  matcher: ['/admin/:path*'],
+}
+
 export function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl
-
-  // ✅ Só protege /admin e subrotas
-  if (!pathname.startsWith('/admin')) return NextResponse.next()
-
   const auth = req.headers.get('authorization')
+
+  // Se não tem auth -> pede login
   if (!auth) {
     return new NextResponse('Auth required', {
       status: 401,
@@ -23,7 +24,7 @@ export function middleware(req: NextRequest) {
     })
   }
 
-  // ✅ Edge-safe: usa atob (Buffer não existe no middleware)
+  // Edge-safe
   let decoded = ''
   try {
     decoded = atob(encoded)
@@ -34,7 +35,9 @@ export function middleware(req: NextRequest) {
     })
   }
 
-  const [user, pass] = decoded.split(':')
+  const idx = decoded.indexOf(':')
+  const user = idx >= 0 ? decoded.slice(0, idx) : ''
+  const pass = idx >= 0 ? decoded.slice(idx + 1) : ''
 
   const USER = process.env.ADMIN_USER || 'admin'
   const PASS = process.env.ADMIN_PASS || '1234'
@@ -47,8 +50,4 @@ export function middleware(req: NextRequest) {
   }
 
   return NextResponse.next()
-}
-
-export const config = {
-  matcher: ['/admin/:path*'],
 }
