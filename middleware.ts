@@ -1,33 +1,37 @@
-import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
-
-function unauthorized() {
-  return new NextResponse('Acesso restrito', {
-    status: 401,
-    headers: { 'WWW-Authenticate': 'Basic realm="Admin"' },
-  })
-}
+import type { NextRequest } from 'next/server'
 
 export function middleware(req: NextRequest) {
+  // Só protege /admin e subrotas
   const { pathname } = req.nextUrl
-
-  // Protege /admin e qualquer subrota
   if (!pathname.startsWith('/admin')) return NextResponse.next()
 
-  const user = process.env.ADMIN_USER
-  const pass = process.env.ADMIN_PASS
-
-  // Se não configurou as envs, bloqueia
-  if (!user || !pass) return unauthorized()
-
   const auth = req.headers.get('authorization')
-  if (!auth?.startsWith('Basic ')) return unauthorized()
+  if (!auth) {
+    return new NextResponse('Auth required', {
+      status: 401,
+      headers: { 'WWW-Authenticate': 'Basic realm="Admin"' },
+    })
+  }
 
-  const base64 = auth.split(' ')[1] ?? ''
-  const decoded = Buffer.from(base64, 'base64').toString()
-  const [u, p] = decoded.split(':')
+  const [scheme, encoded] = auth.split(' ')
+  if (scheme !== 'Basic' || !encoded) {
+    return new NextResponse('Invalid auth', { status: 401 })
+  }
 
-  if (u !== user || p !== pass) return unauthorized()
+  const decoded = Buffer.from(encoded, 'base64').toString('utf8')
+  const [user, pass] = decoded.split(':')
+
+  // Troque para o seu usuário e senha:
+  const USER = process.env.ADMIN_USER || 'admin'
+  const PASS = process.env.ADMIN_PASS || '1234'
+
+  if (user !== USER || pass !== PASS) {
+    return new NextResponse('Unauthorized', {
+      status: 401,
+      headers: { 'WWW-Authenticate': 'Basic realm="Admin"' },
+    })
+  }
 
   return NextResponse.next()
 }
