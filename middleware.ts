@@ -1,44 +1,56 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-function unauthorized() {
-  return new NextResponse('Auth required', {
-    status: 401,
-    headers: { 'WWW-Authenticate': 'Basic realm="Admin"' },
-  })
-}
-
 export function middleware(req: NextRequest) {
-  const pathname = req.nextUrl.pathname
+  const { pathname } = req.nextUrl
 
-  // TRAVA TOTAL: não faz nada fora do /admin
-  if (!pathname.startsWith('/admin')) return NextResponse.next()
+  // Só protege /admin e subrotas
+  if (!pathname.startsWith('/admin')) {
+    return NextResponse.next()
+  }
 
   const auth = req.headers.get('authorization')
-  if (!auth) return unauthorized()
+
+  // Se não tem auth, pede login
+  if (!auth) {
+    return new NextResponse('Auth required', {
+      status: 401,
+      headers: { 'WWW-Authenticate': 'Basic realm="Admin"' },
+    })
+  }
 
   const [scheme, encoded] = auth.split(' ')
-  if (scheme !== 'Basic' || !encoded) return unauthorized()
 
-  // Edge-safe (sem Buffer)
+  if (scheme !== 'Basic' || !encoded) {
+    return new NextResponse('Invalid auth', {
+      status: 401,
+      headers: { 'WWW-Authenticate': 'Basic realm="Admin"' },
+    })
+  }
+
+  // ✅ Edge-safe (Buffer não existe no middleware)
   let decoded = ''
   try {
     decoded = atob(encoded)
   } catch {
-    return unauthorized()
+    return new NextResponse('Invalid auth', {
+      status: 401,
+      headers: { 'WWW-Authenticate': 'Basic realm="Admin"' },
+    })
   }
 
-  const i = decoded.indexOf(':')
-  const user = i >= 0 ? decoded.slice(0, i) : ''
-  const pass = i >= 0 ? decoded.slice(i + 1) : ''
+  const [user, pass] = decoded.split(':')
 
-  const USER = process.env.ADMIN_USER || ''
-  const PASS = process.env.ADMIN_PASS || ''
+  // ✅ Usa env da Vercel (Production)
+  const USER = process.env.ADMIN_USER || 'admin'
+  const PASS = process.env.ADMIN_PASS || '1234'
 
-  // Se não existir env na Vercel, bloqueia (pra você perceber)
-  if (!USER || !PASS) return unauthorized()
-
-  if (user !== USER || pass !== PASS) return unauthorized()
+  if (user !== USER || pass !== PASS) {
+    return new NextResponse('Unauthorized', {
+      status: 401,
+      headers: { 'WWW-Authenticate': 'Basic realm="Admin"' },
+    })
+  }
 
   return NextResponse.next()
 }
