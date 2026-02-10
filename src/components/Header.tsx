@@ -74,25 +74,26 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-zinc-900 bg-black/80 backdrop-blur">
       <div className="mx-auto max-w-6xl px-6">
         <div className="flex h-16 items-center justify-between gap-4">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-3">
-            <div className="relative h-9 w-9 overflow-hidden rounded-lg border border-zinc-900 bg-zinc-950">
+          {/* Logo (novo) */}
+          <Link href="/" className="flex items-center">
+            <div className="relative h-10 w-[190px] sm:w-[220px] md:w-[240px]">
               <Image
-                src="/logo-chiado.png"
+                src="/brand/logo-empresa.png"
                 alt="Chiado Construtora"
                 fill
-                className="object-contain p-1"
+                className="object-contain"
                 priority
               />
             </div>
-
-            <span className="hidden sm:block text-sm font-semibold tracking-wide text-white">
-              Chiado Construtora
-            </span>
           </Link>
 
           {/* Desktop */}
           <nav className="hidden md:flex items-center gap-6 text-sm">
+            {/* Home */}
+            <Link href="/" className="text-zinc-200 hover:text-white transition">
+              Home
+            </Link>
+
             {/* Obras dropdown */}
             <div className="relative" ref={obrasDesktopRef}>
               <button
@@ -153,7 +154,7 @@ export default function Header() {
               Contato
             </Link>
 
-            {/* ✅ IMPORTANTE: prefetch desativado para não disparar popup na Home */}
+            {/* Admin com prefetch desligado (evita popup de auth) */}
             <Link
               href="/admin"
               prefetch={false}
@@ -187,6 +188,14 @@ export default function Header() {
               </div>
 
               <div className="p-2">
+                <Link
+                  href="/"
+                  className="block rounded-lg px-3 py-2 text-zinc-200 hover:bg-zinc-900 transition"
+                  onClick={() => setOpenMobile(false)}
+                >
+                  Home
+                </Link>
+
                 <button
                   type="button"
                   onClick={() => setOpenObrasMobile((v) => !v)}
@@ -254,7 +263,6 @@ export default function Header() {
                   Contato
                 </Link>
 
-                {/* ✅ IMPORTANTE: prefetch desativado também no mobile */}
                 <Link
                   href="/admin"
                   prefetch={false}
