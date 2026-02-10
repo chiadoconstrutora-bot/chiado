@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================
+   THEME (mais claro / menos pesado)
+   ========================= */
+:root {
+  --chiado-green: #79aa45;
+  --chiado-cream: #f2e7dc;
+
+  /* clareando bem o “charcoal” */
+  --bg: #1a1f24;       /* fundo geral */
+  --panel: #232a31;    /* cards/painéis */
+  --panel-2: #2b333c;  /* hover/variação */
+  --border: #36404a;   /* bordas */
+  --text: #f4f6f8;     /* texto */
+  --muted: #b7c0c8;    /* texto secundário */
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Links */
+a:hover {
+  color: var(--chiado-cream);
+}
+
+/* Botão principal */
+.chiado-btn {
+  background: var(--chiado-green);
+  color: #061000;
+}
+.chiado-btn:hover {
+  filter: brightness(1.05);
+}
+
+/* “Outline” padrão */
+.chiado-outline {
+  border: 1px solid var(--border);
+  background: var(--panel);
+}
+
+/* =========================
+   OVERRIDES para Tailwind classes
+   (deixa o site todo mais claro sem mexer nos componentes)
+   ========================= */
+@layer utilities {
+  /* fundos comuns */
+  .bg-black {
+    background-color: var(--bg) !important;
+  }
+
+  .bg-black\/80,
+  .bg-black\/70,
+  .bg-black\/60,
+  .bg-black\/50 {
+    background-color: rgba(26, 31, 36, 0.8) !important; /* baseado no --bg */
+  }
+
+  /* painéis zinc muito escuros -> viram panel */
+  .bg-zinc-950,
+  .bg-zinc-900 {
+    background-color: var(--panel) !important;
+  }
+
+  .bg-zinc-800 {
+    background-color: var(--panel-2) !important;
+  }
+
+  /* bordas zinc -> border */
+  .border-zinc-950,
+  .border-zinc-900,
+  .border-zinc-800,
+  .border-zinc-700 {
+    border-color: var(--border) !important;
+  }
+
+  /* textos muted */
+  .text-zinc-500,
+  .text-zinc-400,
+  .text-zinc-300 {
+    color: var(--muted) !important;
+  }
+
+  /* gradientes pretos -> menos pesados */
+  .from-black,
+  .via-black,
+  .to-black {
+    --tw-gradient-from: rgba(26, 31, 36, 0.95) !important;
+    --tw-gradient-to: rgba(26, 31, 36, 0.1) !important;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #3a4652;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #14181c;
+}
