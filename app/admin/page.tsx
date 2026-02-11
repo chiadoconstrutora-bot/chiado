@@ -88,6 +88,21 @@ function safeParse<T>(json: any): T | null {
   return null
 }
 
+function ensure3Banners(input?: HomeBanner[]): HomeBanner[] {
+  const base = Array.isArray(input) ? [...input] : []
+  const normalized = base
+    .filter(Boolean)
+    .map((b) => ({
+      imageUrl: b?.imageUrl || '',
+      title: b?.title || '',
+      subtitle: b?.subtitle || '',
+      href: b?.href || '',
+    }))
+
+  while (normalized.length < 3) normalized.push({ imageUrl: '', title: '', subtitle: '', href: '' })
+  return normalized.slice(0, 3)
+}
+
 async function upsertPagina(slug: string, titulo: string, conteudoObj: any) {
   const payload = {
     slug,
@@ -95,7 +110,6 @@ async function upsertPagina(slug: string, titulo: string, conteudoObj: any) {
     conteudo: JSON.stringify(conteudoObj),
   }
 
-  // tenta update; se não existir, faz insert
   const { data: existing } = await supabase.from('paginas').select('id').eq('slug', slug).single()
 
   if (existing?.id) {
@@ -187,11 +201,7 @@ export default function Admin() {
   }
 
   async function loadDiferenciais(obraId: string) {
-    const { data, error } = await supabase
-      .from('diferenciais')
-      .select('*')
-      .eq('obra_id', obraId)
-
+    const { data, error } = await supabase.from('diferenciais').select('*').eq('obra_id', obraId)
     if (error) {
       alert(error.message)
       return
@@ -375,11 +385,7 @@ export default function Admin() {
   }
 
   async function loadPaginas() {
-    const { data, error } = await supabase
-      .from('paginas')
-      .select('*')
-      .order('slug', { ascending: true })
-
+    const { data, error } = await supabase.from('paginas').select('*').order('slug', { ascending: true })
     if (error) {
       alert(error.message)
       return
@@ -432,7 +438,10 @@ export default function Admin() {
     const contatoParsed = safeParse<ContatoConfig>(contato?.conteudo)
     const footerParsed = safeParse<FooterSettings>(footer?.conteudo)
 
-    setHomeCfg({ ...DEFAULT_HOME, ...(homeParsed || {}) })
+    const mergedHome: HomeConfig = { ...DEFAULT_HOME, ...(homeParsed || {}) }
+    mergedHome.banners = ensure3Banners(mergedHome.banners)
+
+    setHomeCfg(mergedHome)
     setContatoCfg({ ...DEFAULT_CONTATO, ...(contatoParsed || {}) })
     setFooterCfg({ ...DEFAULT_FOOTER, ...(footerParsed || {}) })
   }
@@ -448,9 +457,8 @@ export default function Admin() {
       const url = pub.publicUrl
 
       setHomeCfg((prev) => {
-        const banners = [...(prev.banners || [{}, {}, {}])]
-        while (banners.length < 3) banners.push({ imageUrl: '' })
-        banners[index] = { ...(banners[index] || { imageUrl: '' }), imageUrl: url }
+        const banners = ensure3Banners(prev.banners)
+        banners[index] = { ...banners[index], imageUrl: url }
         return { ...prev, banners }
       })
     } catch (e: any) {
@@ -463,10 +471,10 @@ export default function Admin() {
   async function salvarSite() {
     setSavingSite(true)
     try {
-      // normaliza para sempre ter 3 banners
-      const banners = [...(homeCfg.banners || [])]
-      while (banners.length < 3) banners.push({ imageUrl: '' })
-      const homeToSave = { ...homeCfg, banners: banners.slice(0, 3) }
+      const homeToSave: HomeConfig = {
+        ...homeCfg,
+        banners: ensure3Banners(homeCfg.banners),
+      }
 
       await upsertPagina('home', 'Home', homeToSave)
       await upsertPagina('contato', 'Contato', contatoCfg)
@@ -645,7 +653,9 @@ export default function Admin() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {[0, 1, 2].map((i) => {
-                    const b = (homeCfg.banners || [{}, {}, {}])[i] as HomeBanner
+                    const banners = ensure3Banners(homeCfg.banners)
+                    const b = banners[i]
+
                     return (
                       <div key={i} className="p-4 rounded-xl border border-zinc-800 bg-black/20">
                         <div className="text-sm text-zinc-300 mb-2">Banner {i + 1}</div>
@@ -680,10 +690,9 @@ export default function Admin() {
                             value={b?.title || ''}
                             onChange={(e) =>
                               setHomeCfg((p) => {
-                                const banners = [...(p.banners || [{}, {}, {}])]
-                                while (banners.length < 3) banners.push({ imageUrl: '' })
-                                banners[i] = { ...(banners[i] as any), title: e.target.value }
-                                return { ...p, banners }
+                                const next = ensure3Banners(p.banners)
+                                next[i] = { ...next[i], title: e.target.value }
+                                return { ...p, banners: next }
                               })
                             }
                             className="mt-1 w-full bg-black border border-zinc-800 rounded px-3 py-2"
@@ -696,13 +705,28 @@ export default function Admin() {
                             value={b?.subtitle || ''}
                             onChange={(e) =>
                               setHomeCfg((p) => {
-                                const banners = [...(p.banners || [{}, {}, {}])]
-                                while (banners.length < 3) banners.push({ imageUrl: '' })
-                                banners[i] = { ...(banners[i] as any), subtitle: e.target.value }
-                                return { ...p, banners }
+                                const next = ensure3Banners(p.banners)
+                                next[i] = { ...next[i], subtitle: e.target.value }
+                                return { ...p, banners: next }
                               })
                             }
                             className="mt-1 w-full bg-black border border-zinc-800 rounded px-3 py-2"
+                          />
+                        </div>
+
+                        <div className="mt-3">
+                          <label className="text-zinc-400 text-sm">Link (opcional)</label>
+                          <input
+                            value={b?.href || ''}
+                            onChange={(e) =>
+                              setHomeCfg((p) => {
+                                const next = ensure3Banners(p.banners)
+                                next[i] = { ...next[i], href: e.target.value }
+                                return { ...p, banners: next }
+                              })
+                            }
+                            className="mt-1 w-full bg-black border border-zinc-800 rounded px-3 py-2"
+                            placeholder="/obras"
                           />
                         </div>
                       </div>
@@ -823,7 +847,10 @@ export default function Admin() {
                   <input
                     value={footerCfg.contato?.telefone || ''}
                     onChange={(e) =>
-                      setFooterCfg((p) => ({ ...p, contato: { ...(p.contato || {}), telefone: e.target.value } }))
+                      setFooterCfg((p) => ({
+                        ...p,
+                        contato: { ...(p.contato || {}), telefone: e.target.value },
+                      }))
                     }
                     className="mt-1 w-full bg-black border border-zinc-800 rounded px-3 py-2"
                   />
@@ -833,7 +860,10 @@ export default function Admin() {
                   <input
                     value={footerCfg.contato?.email || ''}
                     onChange={(e) =>
-                      setFooterCfg((p) => ({ ...p, contato: { ...(p.contato || {}), email: e.target.value } }))
+                      setFooterCfg((p) => ({
+                        ...p,
+                        contato: { ...(p.contato || {}), email: e.target.value },
+                      }))
                     }
                     className="mt-1 w-full bg-black border border-zinc-800 rounded px-3 py-2"
                   />
@@ -843,7 +873,10 @@ export default function Admin() {
                   <input
                     value={footerCfg.contato?.cidade || ''}
                     onChange={(e) =>
-                      setFooterCfg((p) => ({ ...p, contato: { ...(p.contato || {}), cidade: e.target.value } }))
+                      setFooterCfg((p) => ({
+                        ...p,
+                        contato: { ...(p.contato || {}), cidade: e.target.value },
+                      }))
                     }
                     className="mt-1 w-full bg-black border border-zinc-800 rounded px-3 py-2"
                   />
@@ -956,7 +989,9 @@ export default function Admin() {
 
                   {/* Banner real */}
                   <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-                    <div className="text-zinc-300 font-medium mb-3">Banner (Foto real – quando concluída)</div>
+                    <div className="text-zinc-300 font-medium mb-3">
+                      Banner (Foto real – quando concluída)
+                    </div>
 
                     {obraSelecionada?.banner_real && (
                       <img
@@ -1095,9 +1130,7 @@ export default function Admin() {
                     className="w-full bg-black border border-zinc-800 rounded px-3 py-2 min-h-[160px]"
                     placeholder="Escreva o texto da página..."
                   />
-                  <p className="text-xs text-zinc-500 mt-2">
-                    Dica: você pode usar quebras de linha normalmente.
-                  </p>
+                  <p className="text-xs text-zinc-500 mt-2">Dica: você pode usar quebras de linha normalmente.</p>
                 </div>
 
                 <button
