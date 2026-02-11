@@ -76,16 +76,16 @@ export default function Header() {
         <div className="flex h-20 items-center justify-between gap-4">
           {/* Logo (maior) */}
           <Link href="/" className="flex items-center">
-            <div className="relative h-12 w-[260px] sm:w-[320px] md:w-[360px]">
-              <Image
-                src="/brand/logo-empresa.png"
-                alt="Chiado Construtora"
-                fill
-                className="object-contain"
-                priority
-              />
-            </div>
-          </Link>
+  <div className="relative h-14 sm:h-16 md:h-20 w-[260px] sm:w-[320px] md:w-[380px]">
+    <Image
+      src="/brand/logo-empresa.png"
+      alt="Chiado Construtora"
+      fill
+      className="object-contain"
+      priority
+    />
+  </div>
+</Link>
 
           {/* Desktop */}
           <nav className="hidden md:flex items-center gap-6 text-sm">
