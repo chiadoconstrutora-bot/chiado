@@ -20,7 +20,7 @@ const DEFAULT_HOME: HomeConfig = {
   heroTag: 'CHIADO CONSTRUTORA',
   heroTitle: 'Construção premium',
   heroSubtitle: 'com padrão e confiança',
-  ctaPrimaryLabel: 'Ver obras',
+  ctaPrimaryLabel: '',
   ctaPrimaryHref: '/obras',
   ctaSecondaryLabel: 'Fale conosco',
   ctaSecondaryHref: '/contato',
@@ -112,20 +112,24 @@ export default function Home() {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href={cfg.ctaPrimaryHref || '/obras'}
-                className="bg-white text-black px-6 py-3 rounded-xl font-medium hover:opacity-90 transition"
-              >
-                {cfg.ctaPrimaryLabel || 'Ver obras'}
-              </Link>
+  {(cfg.ctaPrimaryLabel?.trim() && cfg.ctaPrimaryHref?.trim()) && (
+    <Link
+      href={cfg.ctaPrimaryHref}
+      className="bg-white text-black px-6 py-3 rounded-xl font-medium hover:opacity-90 transition"
+    >
+      {cfg.ctaPrimaryLabel}
+    </Link>
+  )}
 
-              <Link
-                href={cfg.ctaSecondaryHref || '/contato'}
-                className="bg-white/5 border border-white/10 px-6 py-3 rounded-xl font-medium hover:bg-white/10 transition"
-              >
-                {cfg.ctaSecondaryLabel || 'Fale conosco'}
-              </Link>
-            </div>
+  {(cfg.ctaSecondaryLabel?.trim() && cfg.ctaSecondaryHref?.trim()) && (
+    <Link
+      href={cfg.ctaSecondaryHref}
+      className="bg-white/5 border border-white/10 px-6 py-3 rounded-xl font-medium hover:bg-white/10 transition"
+    >
+      {cfg.ctaSecondaryLabel}
+    </Link>
+  )}
+</div>
           </div>
         </section>
 

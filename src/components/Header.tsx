@@ -63,7 +63,7 @@ export default function Header() {
     loadObras()
   }, [])
 
-  // Fecha menus ao navegar (mudar rota)
+  // Fecha menus ao navegar
   useEffect(() => {
     setOpenObrasDesktop(false)
     setOpenObrasMobile(false)
@@ -71,12 +71,12 @@ export default function Header() {
   }, [pathname])
 
   return (
-    <header className="sticky top-0 z-50 border-b border-zinc-900 bg-black/80 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-black/70 backdrop-blur">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="flex h-16 items-center justify-between gap-4">
-          {/* Logo (novo) */}
+        <div className="flex h-20 items-center justify-between gap-4">
+          {/* Logo (maior) */}
           <Link href="/" className="flex items-center">
-            <div className="relative h-10 w-[190px] sm:w-[220px] md:w-[240px]">
+            <div className="relative h-12 w-[260px] sm:w-[320px] md:w-[360px]">
               <Image
                 src="/brand/logo-empresa.png"
                 alt="Chiado Construtora"
@@ -89,7 +89,6 @@ export default function Header() {
 
           {/* Desktop */}
           <nav className="hidden md:flex items-center gap-6 text-sm">
-            {/* Home */}
             <Link href="/" className="text-zinc-200 hover:text-white transition">
               Home
             </Link>
@@ -105,8 +104,8 @@ export default function Header() {
               </button>
 
               {openObrasDesktop && (
-                <div className="absolute left-0 mt-3 w-72 overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950 shadow-xl">
-                  <div className="px-3 py-2 text-xs text-zinc-400 border-b border-zinc-900">
+                <div className="absolute left-0 mt-3 w-72 overflow-hidden rounded-xl border border-white/10 bg-zinc-950 shadow-xl">
+                  <div className="px-3 py-2 text-xs text-zinc-400 border-b border-white/10">
                     Empreendimentos
                   </div>
 
@@ -120,7 +119,7 @@ export default function Header() {
                         <Link
                           key={o.id}
                           href={`/obras/${o.slug}`}
-                          className="block px-4 py-3 text-sm text-zinc-200 hover:bg-zinc-900 transition"
+                          className="block px-4 py-3 text-sm text-zinc-200 hover:bg-white/5 transition"
                           onClick={() => setOpenObrasDesktop(false)}
                         >
                           {o.nome}
@@ -129,10 +128,10 @@ export default function Header() {
                     )}
                   </div>
 
-                  <div className="border-t border-zinc-900 p-2">
+                  <div className="border-t border-white/10 p-2">
                     <Link
                       href="/obras"
-                      className="block rounded-lg px-3 py-2 text-sm text-zinc-200 hover:bg-zinc-900 transition"
+                      className="block rounded-lg px-3 py-2 text-sm text-zinc-200 hover:bg-white/5 transition"
                       onClick={() => setOpenObrasDesktop(false)}
                     >
                       Ver todas →
@@ -154,24 +153,14 @@ export default function Header() {
               Contato
             </Link>
 
-            {/* Admin com prefetch desligado (evita popup de auth) */}
-            <Link
-              href="/admin"
-              prefetch={false}
-              className="rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-zinc-200 hover:bg-zinc-900 transition"
-            >
-              Admin
-            </Link>
-
-            <Link href="/obras" className="rounded-lg px-4 py-2 font-medium chiado-btn">
-              Ver obras
-            </Link>
+            {/* REMOVIDO: Admin (você acessa direto /admin) */}
+            {/* REMOVIDO: botão Ver obras (já tem menu Obras) */}
           </nav>
 
           {/* Mobile toggle */}
           <button
             type="button"
-            className="md:hidden rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-zinc-100 hover:bg-zinc-900 transition"
+            className="md:hidden rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-zinc-100 hover:bg-white/10 transition"
             onClick={() => setOpenMobile((v) => !v)}
             aria-label="Abrir menu"
           >
@@ -182,15 +171,13 @@ export default function Header() {
         {/* Mobile menu */}
         {openMobile && (
           <div className="md:hidden pb-4">
-            <div className="mt-2 rounded-xl border border-zinc-900 bg-zinc-950 overflow-hidden">
-              <div className="p-3 border-b border-zinc-900 text-xs text-zinc-400">
-                Menu
-              </div>
+            <div className="mt-2 rounded-xl border border-white/10 bg-zinc-950 overflow-hidden">
+              <div className="p-3 border-b border-white/10 text-xs text-zinc-400">Menu</div>
 
               <div className="p-2">
                 <Link
                   href="/"
-                  className="block rounded-lg px-3 py-2 text-zinc-200 hover:bg-zinc-900 transition"
+                  className="block rounded-lg px-3 py-2 text-zinc-200 hover:bg-white/5 transition"
                   onClick={() => setOpenMobile(false)}
                 >
                   Home
@@ -199,13 +186,13 @@ export default function Header() {
                 <button
                   type="button"
                   onClick={() => setOpenObrasMobile((v) => !v)}
-                  className="w-full text-left rounded-lg px-3 py-2 text-zinc-200 hover:bg-zinc-900 transition"
+                  className="w-full text-left rounded-lg px-3 py-2 text-zinc-200 hover:bg-white/5 transition"
                 >
                   Obras <span className="text-zinc-500">▾</span>
                 </button>
 
                 {openObrasMobile && (
-                  <div className="mt-2 rounded-lg border border-zinc-900 bg-black/20 overflow-hidden">
+                  <div className="mt-2 rounded-lg border border-white/10 bg-white/5 overflow-hidden">
                     {obras.length === 0 ? (
                       <div className="px-3 py-2 text-sm text-zinc-500">
                         Nenhuma obra cadastrada.
@@ -215,7 +202,7 @@ export default function Header() {
                         <Link
                           key={o.id}
                           href={`/obras/${o.slug}`}
-                          className="block px-3 py-2 text-sm text-zinc-200 hover:bg-zinc-900 transition"
+                          className="block px-3 py-2 text-sm text-zinc-200 hover:bg-white/10 transition"
                           onClick={() => {
                             setOpenMobile(false)
                             setOpenObrasMobile(false)
@@ -228,7 +215,7 @@ export default function Header() {
 
                     <Link
                       href="/obras"
-                      className="block px-3 py-2 text-sm text-zinc-200 hover:bg-zinc-900 transition border-t border-zinc-900"
+                      className="block px-3 py-2 text-sm text-zinc-200 hover:bg-white/10 transition border-t border-white/10"
                       onClick={() => {
                         setOpenMobile(false)
                         setOpenObrasMobile(false)
@@ -241,7 +228,7 @@ export default function Header() {
 
                 <Link
                   href="/sobre"
-                  className="block rounded-lg px-3 py-2 text-zinc-200 hover:bg-zinc-900 transition mt-2"
+                  className="block rounded-lg px-3 py-2 text-zinc-200 hover:bg-white/5 transition mt-2"
                   onClick={() => setOpenMobile(false)}
                 >
                   Sobre nós
@@ -249,7 +236,7 @@ export default function Header() {
 
                 <Link
                   href="/tabela"
-                  className="block rounded-lg px-3 py-2 text-zinc-200 hover:bg-zinc-900 transition"
+                  className="block rounded-lg px-3 py-2 text-zinc-200 hover:bg-white/5 transition"
                   onClick={() => setOpenMobile(false)}
                 >
                   Tabela
@@ -257,28 +244,14 @@ export default function Header() {
 
                 <Link
                   href="/contato"
-                  className="block rounded-lg px-3 py-2 text-zinc-200 hover:bg-zinc-900 transition"
+                  className="block rounded-lg px-3 py-2 text-zinc-200 hover:bg-white/5 transition"
                   onClick={() => setOpenMobile(false)}
                 >
                   Contato
                 </Link>
 
-                <Link
-                  href="/admin"
-                  prefetch={false}
-                  className="block rounded-lg px-3 py-2 text-zinc-200 hover:bg-zinc-900 transition"
-                  onClick={() => setOpenMobile(false)}
-                >
-                  Admin
-                </Link>
-
-                <Link
-                  href="/obras"
-                  className="mt-3 block rounded-lg px-4 py-2 text-center font-medium chiado-btn"
-                  onClick={() => setOpenMobile(false)}
-                >
-                  Ver obras
-                </Link>
+                {/* REMOVIDO: Admin */}
+                {/* REMOVIDO: Ver obras */}
               </div>
             </div>
           </div>

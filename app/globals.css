@@ -3,18 +3,20 @@
 @tailwind utilities;
 
 /* =========================
-   THEME (mais claro / menos pesado)
+   THEME (mais claro / premium)
    ========================= */
 :root {
   --chiado-green: #79aa45;
   --chiado-cream: #f2e7dc;
 
-  --bg: #1a1f24;
-  --panel: #232a31;
-  --panel-2: #2b333c;
-  --border: #36404a;
-  --text: #f4f6f8;
-  --muted: #b7c0c8;
+  /* mais claro */
+  --bg: #232a31;
+  --panel: #2b3440;
+  --panel-2: #333f4c;
+  --border: #42505e;
+
+  --text: #f6f8fb;
+  --muted: #c7d0d8;
 }
 
 html,
@@ -23,8 +25,11 @@ body {
 }
 
 body {
-  background: var(--bg);
   color: var(--text);
+  background:
+    radial-gradient(900px 400px at 12% 6%, rgba(121, 170, 69, 0.18), transparent 60%),
+    radial-gradient(700px 360px at 88% 10%, rgba(242, 231, 220, 0.10), transparent 55%),
+    linear-gradient(180deg, #1f252b 0%, var(--bg) 55%, #1f252b 100%);
 }
 
 a:hover {
@@ -33,10 +38,10 @@ a:hover {
 
 .chiado-btn {
   background: var(--chiado-green);
-  color: #061000;
+  color: #081100;
 }
 .chiado-btn:hover {
-  filter: brightness(1.05);
+  filter: brightness(1.06);
 }
 
 .chiado-outline {
@@ -53,7 +58,7 @@ a:hover {
   .bg-black\/70,
   .bg-black\/60,
   .bg-black\/50 {
-    background-color: rgba(26, 31, 36, 0.8) !important;
+    background-color: rgba(35, 42, 49, 0.75) !important;
   }
 
   .bg-zinc-950,
@@ -81,19 +86,19 @@ a:hover {
   .from-black,
   .via-black,
   .to-black {
-    --tw-gradient-from: rgba(26, 31, 36, 0.95) !important;
-    --tw-gradient-to: rgba(26, 31, 36, 0.1) !important;
+    --tw-gradient-from: rgba(0, 0, 0, 0.55) !important;
+    --tw-gradient-to: rgba(0, 0, 0, 0.05) !important;
     --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
   }
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #3a4652;
-  border-radius: 8px;
+  background: #445463;
+  border-radius: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #14181c;
+  background: rgba(0, 0, 0, 0.15);
 }
